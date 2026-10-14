@@ -1,5 +1,7 @@
 # SafeCampus POSH Awareness Portal (React + SQL)
 
+Live now -> https://posh-awareness-react.vercel.app/
+
 React + Node/Express + SQLite rebuild of the original static-HTML + Firebase version
 (https://github.com/imrevolter/Posh_awareness_minip). Same four pages and the same
 features — hero carousel, POSH Act info, ICC team, anonymous complaint form, admin
