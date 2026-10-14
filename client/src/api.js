@@ -29,7 +29,3 @@ export function resolveComplaint(token, id) {
     headers: { Authorization: `Bearer ${token}` }
   })
 }
-
-export function sendChatMessage(message) {
-  return request('/chat', { method: 'POST', body: JSON.stringify({ message }) })
-}

@@ -1,26 +1,22 @@
 import { useState } from 'react'
-import { sendChatMessage } from '../api.js'
+import { getBotReply } from '../chatbotRules.js'
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
-  const [sending, setSending] = useState(false)
+  const [typing, setTyping] = useState(false)
 
-  async function handleSend() {
+  function handleSend() {
     const text = input.trim()
     if (!text) return
     setMessages(m => [...m, { role: 'user', text }])
     setInput('')
-    setSending(true)
-    try {
-      const { reply } = await sendChatMessage(text)
-      setMessages(m => [...m, { role: 'bot', text: reply }])
-    } catch {
-      setMessages(m => [...m, { role: 'bot', text: 'Error connecting to AI' }])
-    } finally {
-      setSending(false)
-    }
+    setTyping(true)
+    setTimeout(() => {
+      setMessages(m => [...m, { role: 'bot', text: getBotReply(text) }])
+      setTyping(false)
+    }, 500)
   }
 
   return (
@@ -28,12 +24,15 @@ export default function Chatbot() {
       <div id="chatbot-button" onClick={() => setOpen(o => !o)}>💬</div>
       {open && (
         <div id="chatbot" style={{ display: 'flex' }}>
-          <div id="chat-header">SafeCampus AI Assistant</div>
+          <div id="chat-header">SafeCampus Assistant</div>
           <div id="chat-body">
+            {messages.length === 0 && (
+              <div className="bot">Hi! Ask me about the POSH Act, filing a complaint, the ICC, or confidentiality.</div>
+            )}
             {messages.map((m, i) => (
               <div key={i} className={m.role}>{m.text}</div>
             ))}
-            {sending && <div className="bot">Typing...</div>}
+            {typing && <div className="bot">Typing...</div>}
           </div>
           <div id="chat-input-area">
             <input

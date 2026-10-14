@@ -3,7 +3,7 @@
 React + Node/Express + SQLite rebuild of the original static-HTML + Firebase version
 (https://github.com/imrevolter/Posh_awareness_minip). Same four pages and the same
 features — hero carousel, POSH Act info, ICC team, anonymous complaint form, admin
-dashboard, AI chatbot — with Firestore replaced by a real SQL database and a proper
+dashboard, FAQ chatbot — with Firestore replaced by a real SQL database and a proper
 backend.
 
 ## What changed vs the original
@@ -17,11 +17,15 @@ backend.
   Firestore directly, bypassing the password entirely. Here, `/api/complaints` (GET) and
   the resolve endpoint require a bearer token issued by `/api/auth/login`, checked
   server-side on every request.
-- **The OpenAI key is no longer shipped to the browser.** The original embedded the key
-  directly in `index.html` (visible to anyone who views source). Here the frontend calls
-  `/api/chat`, and only the backend holds the key, read from `server/.env`. If you don't
-  set one, the chatbot replies with a message saying it isn't configured yet, instead of
-  failing.
+- **The chatbot is a hardcoded FAQ bot, not a live OpenAI call.** The original embedded
+  an OpenAI key directly in `index.html` (visible to anyone who views source) to call a
+  real LLM. That's unusual for this kind of site anyway — most government/institutional
+  portals use a fixed keyword-matched FAQ bot rather than a live AI, so that's what this
+  is: `client/src/chatbotRules.js` matches the message against a list of POSH/ICC/complaint
+  topics (word-boundary matching, so "hi" doesn't fire on "this" and "complain" doesn't
+  fire on "complaint") and falls back to a generic pointer-to-ICC message if nothing
+  matches. It runs entirely client-side with no network call and no key to manage, since
+  there's no secret involved.
 - **Five static HTML files -> one React app with client-side routing** (`react-router-dom`),
   four pages (`Home`, `Posh`, `Icc`, `Admin`), shared `Navbar`/`Footer`/`Chatbot` components.
 - **The Swiper.js hero carousel was replaced** with a small custom auto-advancing
@@ -39,7 +43,6 @@ server/        Express API + SQLite database
     routes/
       complaints.js      POST (submit), GET (list, admin-only), PATCH (resolve, admin-only)
       auth.js            POST /login
-      chat.js            POST /chat, proxies to OpenAI server-side
     middleware/
       requireAuth.js      bearer-token check for admin routes
   data/            posh.db lives here (gitignored)
@@ -48,6 +51,7 @@ client/        React app (Vite)
   src/
     pages/           Home, Posh, Icc, Admin
     components/      Navbar, Footer, Hero, ComplaintForm, Chatbot
+    chatbotRules.js   keyword -> reply table for the FAQ chatbot
     api.js            fetch wrapper for the backend
   public/images/     ICC member photos + hero slide image (copied from the original repo)
 ```
@@ -72,16 +76,12 @@ npm run dev               # http://localhost:5173, proxies /api to localhost:400
 Open http://localhost:5173. The admin panel is at `/admin`, gated by the
 `ADMIN_PASSWORD` you set in `server/.env`.
 
-## Optional integrations
+## Optional integration
 
-Both are optional — the app works fully without them, just with that one feature
-degraded gracefully:
-
-- **Email notifications on submit (EmailJS):** copy `client/.env.example` to
-  `client/.env` and fill in your EmailJS public key, service ID, and template ID. If
-  left blank, the complaint still saves to the database, it just skips the email step.
-- **AI chatbot (OpenAI):** set `OPENAI_API_KEY` in `server/.env`. If left blank, the
-  chatbot stays functional but replies that it isn't configured yet.
+**Email notifications on submit (EmailJS):** copy `client/.env.example` to
+`client/.env` and fill in your EmailJS public key, service ID, and template ID. If
+left blank, the complaint still saves to the database, it just skips the email step.
+The chatbot needs no configuration — it's hardcoded, see above.
 
 ## Known limitation
 
@@ -97,5 +97,9 @@ crafted redirect that this app doesn't construct.
 Every backend route was exercised directly with curl (success and failure cases: missing
 fields, wrong password, unauthenticated access, resolving a nonexistent complaint) and
 again through the Vite dev proxy to confirm the frontend can actually reach it end to
-end. `npm run build` was run on the client to catch any JSX/import errors. Nothing here
-was assumed to work without being run.
+end. `npm run build` was run on the client to catch any JSX/import errors. The chatbot's
+keyword matching was run against 15 real test messages across every topic plus
+adversarial cases designed to catch substring false-positives — this actually caught and
+fixed three real bugs (a bare `report` keyword, `hi` matching inside "this", and
+`complain` matching inside "complaint") before shipping. Nothing here was assumed to
+work without being run.
