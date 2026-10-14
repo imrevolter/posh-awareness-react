@@ -83,6 +83,35 @@ Open http://localhost:5173. The admin panel is at `/admin`, gated by the
 left blank, the complaint still saves to the database, it just skips the email step.
 The chatbot needs no configuration — it's hardcoded, see above.
 
+## Deploying it publicly
+
+Pushing to GitHub only stores the code — it doesn't give anyone a URL. You need to
+actually run both processes somewhere. The frontend is a static build (deploy anywhere
+that serves static files); the backend is a long-running Node process (needs an actual
+host, not a static host).
+
+1. **Push to GitHub** (see below).
+2. **Deploy `server/` to Render** (or Railway/Fly — any host that runs a persistent
+   Node process): new Web Service, point it at the repo, set **Root Directory** to
+   `server`, **Build Command** to `npm install`, **Start Command** to `npm start`, and
+   add the `ADMIN_PASSWORD` environment variable. You'll get a URL like
+   `https://your-app.onrender.com`.
+3. **Deploy `client/` to Vercel or Netlify**: import the repo, set **Root Directory** to
+   `client`, framework preset **Vite**, build command `npm run build`, output directory
+   `dist`. Add one environment variable: `VITE_API_BASE` = `https://your-app.onrender.com/api`
+   (the backend URL from step 2, with `/api` on the end). Without this, the deployed
+   frontend has no dev-server proxy to fall back on and every API call 404s.
+4. The Vercel URL you get back is the one-click link — that's what you share.
+
+**Important caveat:** SQLite here is a single file on the backend host's disk. Free
+tiers on most platforms (Render's free web service included) wipe the filesystem on
+every redeploy and on every restart after the free instance sleeps from inactivity —
+so submitted complaints will not survive long-term on a free-tier backend. Fine for a
+demo you're actively showing someone; not fine if you want complaints to persist
+indefinitely. If you need real persistence, either pay for a host with a persistent
+disk/volume, or swap SQLite for a free hosted Postgres (Supabase/Neon both have a free
+tier) — that's a backend-only change, the frontend and API shape don't move.
+
 ## Known limitation
 
 `npm audit` flags two moderate-severity advisories in `react-router` (6.x) and the
