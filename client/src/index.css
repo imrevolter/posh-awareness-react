@@ -1,0 +1,281 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f6fb;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.app-navbar {
+  background: linear-gradient(135deg, #5f2c82, #49a09d);
+}
+
+.hero {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.8s ease;
+}
+
+.hero-slide h1 {
+  font-size: 60px;
+  font-weight: 700;
+}
+
+.hero-slide a {
+  color: white;
+  text-decoration: none;
+}
+
+.hero-slide a:hover {
+  text-decoration: underline;
+}
+
+.hero-pagination {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.hero-pagination button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0;
+}
+
+.hero-pagination button.active {
+  background: white;
+}
+
+.section-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: .3s;
+  background: white;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: auto;
+}
+
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  background: #6a11cb;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+}
+
+.timeline-item {
+  padding: 20px;
+  position: relative;
+  width: 50%;
+}
+
+.timeline-item.left {
+  left: 0;
+  text-align: right;
+}
+
+.timeline-item.right {
+  left: 50%;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #6a11cb;
+  border-radius: 50%;
+  top: 25px;
+}
+
+.timeline-item.left::before { right: -9px; }
+.timeline-item.right::before { left: -9px; }
+
+footer {
+  background: #000;
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.social-icons a {
+  font-size: 35px;
+  margin: 15px;
+  color: white;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: #ff4ecb;
+  transform: scale(1.2);
+}
+
+#chatbot-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #6a11cb;
+  color: white;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999;
+  font-size: 20px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#chatbot {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  height: 420px;
+  background: white;
+  border-radius: 15px;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#chat-header {
+  background: #6a11cb;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+#chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#chat-input-area {
+  display: flex;
+}
+
+#chat-input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-top: 1px solid #ccc;
+}
+
+#chat-input-area button {
+  background: #6a11cb;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.user { text-align: right; margin: 5px; color: #333; font-weight: bold; }
+.bot { text-align: left; margin: 5px; color: #555; }
+
+.info-hero {
+  height: 300px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.member-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: auto;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.admin-shell .navbar {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.admin-shell .card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+}
+
+#loginBox {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  top: 120px;
+}
+
+.search-box {
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.pending { background: orange; }
+.resolved { background: green; }
